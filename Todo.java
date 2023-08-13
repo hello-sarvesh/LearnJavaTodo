@@ -16,24 +16,16 @@ public class Todo {
         // we need user input so we use Scanner class for geting input from console.
         // Scanner is class pre define in Java Core Libraries for handles io operations
         Scanner s = new Scanner(System.in);
-        System.out.println("What is your first task ?");
-        // user define task
-        char[] task1 = s.next().toCharArray();
-        setTask(task1); // calling method with parameter
 
-        // another io reader
-        BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("What is your second task ?");
-        char[] task2;
-        // try block handle runtime throw error
-        try {
-            // in this block any runtime error occur then catch block is catched
-            task2 = reader.readLine().toCharArray();
-            setTask(task2);
-            
-        } catch (IOException e) {
-            // catch block is catches that error.
-            e.printStackTrace();
+        System.out.println("How many task you do ? ");
+        int taskNumber = s.nextInt();
+
+        // for loop for create multiple base on taskNumber
+        for (int i = 0; i < taskNumber; i++) {
+            System.out.println("What is your "+(i+1)+" task ?");
+            // user define task
+            char[] task = s.next().toCharArray();
+            setTask(task); // calling method with parameter
         }
 
         showTask(); // calling method
@@ -48,24 +40,16 @@ public class Todo {
     // define funtion for show multiple current task
     public static void showTask() {
         currentTaskNumber--; // decrementing by 1 for previous
-
-        // checking currentTaskNumber is greater than zero : if yes then go inside if ,
-        // else go inside else
-        if (currentTaskNumber > 0) {
-            // if block
+        System.out.print("---Your Task Is---\n");
+        // for loop to display all task
+        for (int i = 0; i < currentTaskNumber; i++) {
             char dot = '.';
 
-            System.out.print(currentTaskNumber);
+            System.out.print(i + 1);
             System.out.print(dot);
             System.out.print(' ');
-            System.out.print(task[currentTaskNumber - 1]);
+            System.out.print(task[i]);
             System.out.print('\n'); // course move new line
-            // recursively calls show method for display all tasks
-            showTask();
-        } else {
-            // else block
-            // stop here calls
-            System.exit(0);// Terminate JVM
         }
     }
 }
