@@ -31,7 +31,7 @@ public class Todo {
         // for loop to display all task
         for (int i = 0; i < currentTaskNumber - 1; i++) {
             char dot = '.';
-
+            
             System.out.print(i + 1);
             System.out.print(dot);
             System.out.print(' ');
