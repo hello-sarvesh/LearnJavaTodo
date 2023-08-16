@@ -7,9 +7,8 @@ import java.util.Scanner; // import Scanner class from Java Core Libraries
 
 public class Todo {
     // global variable
-    // static means that variable common value in all object
-    static int currentTaskNumber = 1;
-    static char[][] task = new char[5][];
+    static Task firstTask = null;
+    static Task currentTask = null;
     static Scanner s = new Scanner(System.in);
 
     // Java code start with main method
@@ -20,23 +19,32 @@ public class Todo {
     }
 
     // define funtion for using multiple set task
-    public static void setTask(char[] taskGiven) {
-        task[currentTaskNumber - 1] = taskGiven;
-        currentTaskNumber++; // increamenting number by 1 for next task
+    public static void setTask(String taskName) {
+        Task newTask = new Task(taskName, Priority.MEDIUM);
+        if (firstTask == null) {
+            firstTask = newTask;
+            currentTask = firstTask;
+        } else {
+            currentTask.setNextTask(newTask);
+            currentTask = newTask;
+        }
     }
 
     // define funtion for show multiple current task
     public static void showTask() {
-        System.out.print("---Your Task Is---\n");
-        // for loop to display all task
-        for (int i = 0; i < currentTaskNumber - 1; i++) {
-            char dot = '.';
-            
-            System.out.print(i + 1);
-            System.out.print(dot);
-            System.out.print(' ');
-            System.out.print(task[i]);
-            System.out.print('\n'); // course move new line
+        // first task is exits ?
+        if (firstTask != null) {
+            Task task = firstTask;
+            System.out.print("---Your Total " + task.getTaskCount() + " Task Is---\n");
+            int i = 0;
+            while (task != null) {// while last task is not null
+                System.out.println("" + i + ". " + task.getTaskName());
+                task = task.getNextTask();
+                i++;
+            }
+            ;
+        } else {
+            System.out.println("---You Not Create Any Task---");
         }
         dashboard();
     }
@@ -59,8 +67,8 @@ public class Todo {
             System.out.println("What is your " + (i + 1) + " task ?");
             try {
                 // user define task
-                char[] task = s.next().toCharArray();
-                setTask(task); // calling method with parameter
+                String taskName = s.next();
+                setTask(taskName); // calling method with parameter
             } catch (Exception e) {
                 System.out.println("Invalid input. Please enter a valid task.");
                 s.nextLine();
