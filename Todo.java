@@ -1,6 +1,9 @@
-import java.io.BufferedReader; // import BufferedReader class from Java Core Libraries
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader; // import InputStreamReader class from Java Core Libraries
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner; // import Scanner class from Java Core Libraries
@@ -15,6 +18,7 @@ public class Todo {
     public static void main(String[] args) {
         // printing hello to java
         System.out.println("Hello Java World !!");
+        getsavedTaskFromFile();
         dashboard(); // calling method
     }
 
@@ -42,7 +46,7 @@ public class Todo {
                 task = task.getNextTask();
                 i++;
             }
-            
+
         } else {
             System.out.println("---You Not Create Any Task---");
         }
@@ -64,13 +68,14 @@ public class Todo {
                 s.nextLine();
             }
         }
+        s.nextLine(); // read and ignore extra \n character
         // for loop for create multiple base on taskNumber
         while (true) {
             for (int i = 0; i < taskNumber; i++) {
                 System.out.println("What is your " + (i + 1) + " task ?");
                 try {
                     // user define task
-                    String taskName = s.next();
+                    String taskName = s.nextLine();
                     setTask(taskName); // calling method with parameter
                 } catch (Exception e) {
                     System.out.println("Invalid input. Please enter a valid task.");
@@ -131,6 +136,52 @@ public class Todo {
         }
     }
 
+    public static Task getLastTask() {
+        if (firstTask != null) {
+            Task task = firstTask;
+            while (task.getNextTask() != null) {// while last task is not null
+                task = task.getNextTask();
+            }
+            return task;
+        } else {
+            return firstTask;
+        }
+    }
+
+    // save all task in file so we can get all task on next run
+    public static void savedTaskInFile() {
+        try {
+            FileOutputStream fout = new FileOutputStream("TaskData.data");// getting file is not then create new
+                                                                          // 'TaskData.any'
+            ObjectOutputStream out = new ObjectOutputStream(fout);
+            out.writeObject(firstTask);
+            out.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+            e.printStackTrace();
+        }
+    }
+
+    // get all task from file that add previously
+    public static void getsavedTaskFromFile() {
+        try {
+            FileInputStream fin = new FileInputStream("TaskData.data");// getting file is not then throw error
+            ObjectInputStream in = new ObjectInputStream(fin);
+            firstTask = (Task) in.readObject();
+            currentTask = getLastTask();
+            in.close();
+        } catch (Exception e) {
+            // TODO: handle exception
+            // e.printStackTrace();
+            try {
+                new File("TaskData.data").createNewFile();// create new 'TaskData.any'
+            } catch (IOException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+        }
+    }
+
     public static void dashboard() {
         String timeStamp = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss").format(new Date());
         // while loop recursively display dashbord if any input error
@@ -158,10 +209,12 @@ public class Todo {
                         dashboard();
                         break;
                     case 0:
+                        savedTaskInFile();
                         System.exit(0);
                         break;
                     default:
                         System.out.println("You enter wrong option .");
+                        savedTaskInFile();
                         System.exit(0);
                         break;
 
